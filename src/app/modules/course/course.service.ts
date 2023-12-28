@@ -7,8 +7,9 @@ import mongoose from 'mongoose';
 import buildQueryAggregation from '../../builder/QueryBuilder';
 
 const createCourseIntoDB = async (payload: TCourse) => {
-  const result = await CourseModel.create(payload);
-  return result;
+  // const result = await CourseModel.create(payload);
+  // return result;
+  return null;
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
@@ -146,8 +147,6 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     );
   }
 };
-
-
 
 export const CourseServices = {
   createCourseIntoDB,

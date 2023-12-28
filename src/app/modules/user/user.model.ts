@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserMethod } from './user.interface';
 import { userRole } from './user.constants';
 import bcrypt from 'bcrypt';
 import config from '../../config';
@@ -10,7 +10,7 @@ const passwordValidator = (password: string): boolean => {
   return passwordRegex.test(password);
 };
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserMethod>(
   {
     username: { type: String, required: true, trim: true, unique: true },
     email: { type: String, required: true, trim: true, unique: true },
@@ -37,6 +37,8 @@ const userSchema = new Schema<TUser>(
   },
 );
 
+/*_______________________middlewares___________________________*/
+
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
@@ -49,4 +51,19 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-export const UserModel = model<TUser>('User', userSchema);
+/*___________________________statics___________________________*/
+
+userSchema.statics.existingUser = async function (username: string) {
+  return await UserModel.findOne({ username }).select(
+    '+password -createdAt -updatedAt',
+  );
+};
+
+userSchema.statics.doesPasswordMatch = async function (
+  plainTextPassword: string,
+  hashedPassword: string,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+export const UserModel = model<TUser, UserMethod>('User', userSchema);

@@ -10,6 +10,9 @@ import { handleCastError } from '../errors/errorHandlers/handleCastError';
 import { handleDuplicateError } from '../errors/errorHandlers/handleDuplicateError';
 import AppError from '../errors/AppError';
 import { handleAppError } from '../errors/errorHandlers/handleAppError';
+import { TokenExpiredError } from 'jsonwebtoken';
+import httpStatus from 'http-status';
+import { sendUnauthorizedResponse } from '../errors/UnauthorizedAccessError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   //setting default values
@@ -17,6 +20,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let message = err.message;
   let errorMessge = err.message;
   let errorDetails = err;
+  // let stack = undefined;
 
   if (err.name === 'CastError') {
     const formattedError = handleCastError(err);
@@ -48,6 +52,8 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = formattedError.message;
     errorMessge = formattedError.errorMessage;
     errorDetails = formattedError.errorDetails;
+  } else if (err instanceof TokenExpiredError) {
+    return sendUnauthorizedResponse(res);
   }
 
   return res.status(statusCode).json({
