@@ -41,15 +41,13 @@ const courseSchema = new Schema<TCourse>(
     provider: { type: String, required: true },
     durationInWeeks: { type: Number },
     details: { type: courseDetailsSchema, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,
     toJSON: {
       transform: function (doc, modified) {
         delete modified.__v;
-        delete modified.isDeleted;
-        delete modified.createdAt;
-        delete modified.updatedAt;
       },
     },
   },

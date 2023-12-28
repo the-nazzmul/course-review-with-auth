@@ -4,6 +4,7 @@ import { TCategory } from './categories.interface';
 const categoriesSchema = new Schema<TCategory>(
   {
     name: { type: String, unique: true, trim: true, required: true },
+    createdBy: {type: Schema.Types.ObjectId, ref: "User"}
   },
   {
     timestamps: true,
