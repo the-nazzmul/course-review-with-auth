@@ -1,7 +1,8 @@
-import { ReviewModel } from "../review/review.model";
+import { CourseModel } from '../course/course.model';
+import { ReviewModel } from '../review/review.model';
 
 const getBestCourseFromDB = async () => {
-  const result = await ReviewModel.aggregate([
+  const pipeline = await ReviewModel.aggregate([
     {
       $group: {
         _id: '$courseId',
@@ -27,27 +28,24 @@ const getBestCourseFromDB = async () => {
     {
       $project: {
         _id: 0,
-        course: {
-          _id: '$course._id',
-          title: '$course.title',
-          instructor: '$course.instructor',
-          categoryId: '$course.categoryId',
-          price: '$course.price',
-          tags: '$course.tags',
-          startDate: '$course.startDate',
-          endDate: '$course.endDate',
-          language: '$course.language',
-          provider: '$course.provider',
-          durationInWeek: '$course.durationInWeek',
-          details: '$course.details',
-        },
+        course: '$course',
         averageRating: '$avarageRating',
         reviewCount: '$count',
       },
     },
   ]);
+  const bestCourseId = pipeline[0].course._id;
+  const bestCourse = await CourseModel.findById(bestCourseId).populate({
+    path: 'createdBy',
+    select: '-createdAt -updatedAt',
+  });
 
-  return result;
+  return {
+    course: bestCourse,
+    averageRating: pipeline[0].averageRating,
+    reviewCount: pipeline[0].reviewCount,
+  };
+
 };
 
 export const BestCourseServices = {

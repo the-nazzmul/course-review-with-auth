@@ -42,9 +42,6 @@ const userLoginService = async (payload: TUserLoginCredentials) => {
     config.access_token_expiration as string,
   );
 
-  console.log(config.access_token_expiration);
-  // const decode = verifyToken(accessToken, config.jwt_access_token as string);
-
   return { user: existingUser, token: accessToken };
 };
 

@@ -21,6 +21,7 @@ router.get('/', CourseControllers.getAllCourses);
 //Update a Course (Partial Update with Dynamic Update)**
 router.put(
   '/:courseId',
+  authChecker(USER_ROLE.admin),
   validateRequest(CourseValidation.updateCourseValidationSchema),
   CourseControllers.updateCourse,
 );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReviewModel } from '../review/review.model';
 import { TCourse } from './course.interface';
 import { CourseModel } from './course.model';
@@ -5,11 +6,12 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import buildQueryAggregation from '../../builder/QueryBuilder';
+import { JwtPayload } from 'jsonwebtoken';
 
-const createCourseIntoDB = async (payload: TCourse) => {
-  // const result = await CourseModel.create(payload);
-  // return result;
-  return null;
+const createCourseIntoDB = async (payload: TCourse, user: JwtPayload) => {
+  payload.createdBy = user._id;
+  const result = await CourseModel.create(payload);
+  return result;
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
@@ -17,7 +19,12 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 
   const result = await CourseModel.aggregate(pipeline);
 
-  const courses = result[0].documents;
+  const courseId = result[0].documents.map((course: any) => course._id);
+
+  const courses = await CourseModel.find({ _id: { $in: courseId } }).populate({
+    path: 'createdBy',
+    select: '-createdAt -updatedAt',
+  });
   const totalCount = result[0].totalCount.length;
 
   if (!totalCount) {
@@ -40,8 +47,14 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getCourseReviewFromDB = async (id: string) => {
-  const course = await CourseModel.findById(id);
-  const reviews = await ReviewModel.find({ courseId: id });
+  const course = await CourseModel.findById(id).populate({
+    path: 'createdBy',
+    select: '-createdAt -updatedAt',
+  });
+  const reviews = await ReviewModel.find({ courseId: id }).populate({
+    path: 'createdBy',
+    select: '-createdAt -updatedAt',
+  });
 
   return { course, reviews };
 };
@@ -135,7 +148,10 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     await session.commitTransaction();
     await session.endSession();
 
-    const result = await CourseModel.findById(id).populate('tags');
+    const result = await CourseModel.findById(id).populate('tags').populate({
+      path: 'createdBy',
+      select: '-createdAt -updatedAt',
+    });
     return result;
   } catch (err) {
     await session.abortTransaction();

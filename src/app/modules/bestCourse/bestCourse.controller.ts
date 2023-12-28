@@ -9,7 +9,7 @@ const getBestCourse = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Best course retrieved successfully',
-    data: result[0],
+    data: result,
   });
 });
 
