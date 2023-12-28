@@ -25,8 +25,4 @@ router.put(
 // Get Course by ID with Reviews**
 router.get('/:courseId/reviews', CourseControllers.getCourseReview);
 
-// Get the Best Course Based on Average Review (Rating)
-router.get('/course/best', CourseControllers.getBestCourse);
-
-
 export const CourseRoutes = router;
