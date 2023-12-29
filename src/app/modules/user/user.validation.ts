@@ -10,6 +10,13 @@ const userValidationSchema = z.object({
   }),
 });
 
+const passwordChangeValidationSchema = z.object({
+  body: z.object({
+    currentPassword: z.string(),
+    newPassword: z.string(),
+  }),
+});
 export const userValidations = {
   userValidationSchema,
+  passwordChangeValidationSchema,
 };

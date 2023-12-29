@@ -1,5 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { TUser, UserMethod } from './user.interface';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Schema, Types, model } from 'mongoose';
+import { TPasswordChange, TUser, UserMethod } from './user.interface';
 import { userRole } from './user.constants';
 import bcrypt from 'bcrypt';
 import config from '../../config';
@@ -9,6 +10,11 @@ const passwordValidator = (password: string): boolean => {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return passwordRegex.test(password);
 };
+
+const passwordChangeSchema = new Schema<TPasswordChange>({
+  timestamp: { type: Date, required: true },
+  password: { type: String, required: true },
+});
 
 const userSchema = new Schema<TUser, UserMethod>(
   {
@@ -24,6 +30,11 @@ const userSchema = new Schema<TUser, UserMethod>(
           'Password must have one lowercase letter, one uppercase letter, one special character, one number and be at least 8 characters in length',
       },
     },
+    passwordHistory: {
+      type: [passwordChangeSchema],
+      default: [],
+      select: 0,
+    },
     role: { type: String, enum: userRole, default: 'user' },
   },
   {
@@ -32,6 +43,7 @@ const userSchema = new Schema<TUser, UserMethod>(
       transform: function (doc, modified) {
         delete modified.__v;
         delete modified.password;
+        delete modified.passwordHistory;
       },
     },
   },
@@ -64,6 +76,34 @@ userSchema.statics.doesPasswordMatch = async function (
   hashedPassword: string,
 ) {
   return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+userSchema.statics.updatePassword = async function (
+  id: Types.ObjectId,
+  newPassword: string,
+) {
+  const updatedUser = await this.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        password: newPassword,
+      },
+      $push: {
+        passwordHistory: {
+          $each: [
+            {
+              timestamp: new Date(),
+              password: newPassword,
+            },
+          ],
+          $position: 0,
+          $slice: 3,
+        },
+      },
+    },
+    { new: true },
+  );
+  return updatedUser;
 };
 
 export const UserModel = model<TUser, UserMethod>('User', userSchema);
