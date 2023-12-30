@@ -50,12 +50,24 @@ This is a small back-end project for course and review related information in Mo
 - review (String): The comment or review text provided by the user.
 - createdBy (Object ID): A reference to the user collection.
 
+## Validation: 
+- For validations of the input data, `zod` was used.
+
 ## Endpoints:
 
-### 1.Create a course
+### 1.User Registration
 
-- Endpoint: `/api/course`
+- Route: `/api/auth/register`
 - Method: POST
+- Request Body:
+
+    {
+        "username": "john_doe",
+        "email": "john@example.com",
+        "password": "123456",
+        "role": "user"
+    }
+
 
 ### 2.Get all courses with pagination and filtering
 
