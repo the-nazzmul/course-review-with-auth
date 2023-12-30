@@ -75,12 +75,11 @@ This is a small back-end project for course and review related information in Mo
   - Authorization: <JWT_TOKEN>
 
 #### Password Change Rules:
-
-        - The system stores only the last 2 previous passwords with timestamps.
-        - During a password change attempt:
-        - The user cannot reuse any of the last 2 passwords or the current one.
-        - If the new password matches any of the previous 2 passwords or the current one, the password change fails.
-        - If the new password is unique and different from the current password, the password change is successful.
+- The system stores only the last 2 previous passwords with timestamps.
+- During a password change attempt:
+- The user cannot reuse any of the last 2 passwords or the current one.
+- If the new password matches any of the previous 2 passwords or the current one, the password change fails.
+- If the new password is unique and different from the current password, the password change is successful.
 
 ### 4.Create a Course (Only Admin can do this)
 
@@ -94,31 +93,31 @@ This is a small back-end project for course and review related information in Mo
 - Route: `/api/courses`
 - Method: GET
 
-  ### Query Parameters for API Requests:
+    ### Query Parameters for API Requests:
 
-        When interacting with the API, you can utilize the following query parameters to customize and filter the results according to your preferences.
+    When interacting with the API, you can utilize the following query parameters to customize and filter the results according to your preferences.
 
-        - page: (Optional) Specifies the page number for paginated results. Default is 1. Example: ?page=2
-
-        - limit: (Optional) Sets the number of items per page. Default is a predefined limit. Example: ?limit=10
-
-        - sortBy: (Optional) Specifies the field by which the results should be sorted. Only applicable to the following fields: title, price, startDate, endDate, language, durationInWeeks. Example: ?sortBy=startDate
-
-        - sortOrder: (Optional) Determines the sorting order, either 'asc' (ascending) or 'desc' (descending). Example: ?sortOrder=desc
-
-        - minPrice, maxPrice: (Optional) Filters results by a price range. Example: ?minPrice=20.00&maxPrice=50.00
-
-        - tags: (Optional) Filters results by the name of a specific tag. Example: ?tags=Programming
-
-        - startDate, endDate: (Optional) Filters results by a date range. Example: ?startDate=2023-01-01&endDate=2023-12-31
-
-        - language: (Optional) Filters results by the language of the course. Example: ?language=English
-
-        - provider: (Optional) Filters results by the course provider. Example: ?provider=Tech Academy
-
-        - durationInWeeks: (Optional) Filters results by the duration of the course in weeks. Example: ?durationInWeeks=8
-
-        - level: (Optional) Filters results by the difficulty level of the course. Example: ?level=Intermediate
+     - page: (Optional) Specifies the page number for paginated results. Default is 1. Example: ?page=2
+ 
+     - limit: (Optional) Sets the number of items per page. Default is a predefined limit. Example: ?limit=10
+ 
+     - sortBy: (Optional) Specifies the field by which the results should be sorted. Only applicable to the following fields: title, price, startDate, endDate, language, durationInWeeks. Example: ?sortBy=startDate
+ 
+     - sortOrder: (Optional) Determines the sorting order, either 'asc' (ascending) or 'desc' (descending). Example: ?sortOrder=desc
+ 
+     - minPrice, maxPrice: (Optional) Filters results by a price range. Example: ?minPrice=20.00&maxPrice=50.00
+ 
+     - tags: (Optional) Filters results by the name of a specific tag. Example: ?tags=Programming
+ 
+     - startDate, endDate: (Optional) Filters results by a date range. Example: ?startDate=2023-01-01&endDate=2023-12-31
+ 
+     - language: (Optional) Filters results by the language of the course. Example: ?language=English
+ 
+     - provider: (Optional) Filters results by the course provider. Example: ?provider=Tech Academy
+ 
+     - durationInWeeks: (Optional) Filters results by the duration of the course in weeks. Example: ?durationInWeeks=8
+ 
+     - level: (Optional) Filters results by the difficulty level of the course. Example: ?level=Intermediate
 
 ### 6.Create a Category (Only Admin can do this)
 
