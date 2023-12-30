@@ -21,8 +21,6 @@ const reviewSchema = new Schema<TReview>(
       transform: function (doc, modified) {
         delete modified.__v;
         delete modified.isDeleted;
-        delete modified.createdAt;
-        delete modified.updatedAt;
       },
     },
   },

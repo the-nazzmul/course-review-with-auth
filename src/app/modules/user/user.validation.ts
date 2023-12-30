@@ -10,13 +10,22 @@ const userValidationSchema = z.object({
   }),
 });
 
+const userLoginValidationSchema = z.object({
+  body: z.object({
+    username: z.string(),
+    password: z.string(),
+  }),
+});
+
 const passwordChangeValidationSchema = z.object({
   body: z.object({
     currentPassword: z.string(),
     newPassword: z.string(),
   }),
 });
+
 export const userValidations = {
   userValidationSchema,
   passwordChangeValidationSchema,
+  userLoginValidationSchema,
 };

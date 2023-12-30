@@ -102,6 +102,26 @@ const buildQueryAggregation = (query: Record<string, any>) => {
     $facet: {
       documents: [
         ...pipeline,
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'createdBy',
+            foreignField: '_id',
+            as: 'createdBy',
+          },
+        },
+        {
+          $unwind: '$createdBy',
+        },
+        {
+          $project: {
+            'createdBy.password': 0,
+            'createdBy.passwordHistory': 0,
+            'createdBy.createdAt': 0,
+            'createdBy.updatedAt': 0,
+            'createdBy.__v': 0,
+          },
+        },
         { $sort: { [sortBy]: sortOrder } },
         { $skip: (page - 1) * limit },
         { $limit: limit },

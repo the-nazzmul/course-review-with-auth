@@ -53,12 +53,23 @@ const userSchema = new Schema<TUser, UserMethod>(
 
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; // doc
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
+  const user = this;
+  const hashedPassword = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
+
+  // hashing password and save into DB
+  user.password = hashedPassword;
+
+  //adding password to password history
+  if (user.isNew) {
+    const timestamp = new Date();
+
+    const newPassword = { timestamp, password: hashedPassword };
+
+    user.passwordHistory?.unshift(newPassword);
+  }
 
   next();
 });

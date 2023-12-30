@@ -19,12 +19,7 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 
   const result = await CourseModel.aggregate(pipeline);
 
-  const courseId = result[0].documents.map((course: any) => course._id);
-
-  const courses = await CourseModel.find({ _id: { $in: courseId } }).populate({
-    path: 'createdBy',
-    select: '-createdAt -updatedAt',
-  });
+  const courses = result[0].documents;
   const totalCount = result[0].totalCount.length;
 
   if (!totalCount) {
